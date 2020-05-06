@@ -5,7 +5,7 @@
 
 1. Install required package: `npm install -g homebridge-cgllc-airmonitor-s1`
 
-![](https://ae01.alicdn.com/kf/HTB1XVLxavfsK1RjSszgq6yXzpXaZ/xiaomi-mijia-3-1-ips.jpg_q50.jpg|width=100)
+![](https://ae01.alicdn.com/kf/HTB1XVLxavfsK1RjSszgq6yXzpXaZ/xiaomi-mijia-3-1-ips.jpg_q50.jpg|width=50)
 
 ## Configuration
 ```json
