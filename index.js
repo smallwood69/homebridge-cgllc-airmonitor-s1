@@ -240,23 +240,23 @@ ClearGrassAirMonitor.prototype = {
         callback(null, this.tvoc);
     },
 
-    getCo2: async function(callback) {
+    getCo2:  function(callback) {
         if (!this.device) {
             callback(new Error('No AirQuality Sensor is discovered.'));
             return;
         }
 
         this.log.debug('getCo2: %s', this.co2);
-	if(this.co2 < 1000){
+	   if(this.co2 < 1000){
 	        callback(null, Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL);
-	}
-	else{
+	   }
+	   else{
 	        callback(null, Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL);
-	}
+	   }
     },
 
 
-    getCo2Level: async function(callback) {
+    getCo2Level:  function(callback) {
         if (!this.device) {
             callback(new Error('No AirQuality Sensor is discovered.'));
             return;
