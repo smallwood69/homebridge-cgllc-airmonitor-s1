@@ -4,6 +4,7 @@
 	"description": "Xiaomi Clear Grass(S1) plugin for Homebridge.",
 	"author": "Steve Kim <smallwood69@gmail.com>",
 	"license": "MIT",
+	"main": "index.js",
 	"keywords": [
 		"homebridge-plugin",
 		"xiaomi",
@@ -14,8 +15,11 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/smallwood69/homebridge-cgllc-airmonitor-s1.git"
+		"url": "https://github.com/smallwood69/homebridge-cgllc-airmonitor-s1"
 	},
+  "bugs": {
+    "url": "https://github.com/smallwood69/homebridge-cgllc-airmonitor-s1/issues"
+  },
 	"engines": {
 		"node": ">=0.12.0",
 		"homebridge": ">=0.4.0",
