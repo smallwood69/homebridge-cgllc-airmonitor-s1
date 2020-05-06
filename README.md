@@ -3,7 +3,7 @@
 
 ## Instalation
 
-
+1. Install required package: npm install -g homebridge-cgllc-airmonitor-s1
 
 ## Configuration
 ```json
