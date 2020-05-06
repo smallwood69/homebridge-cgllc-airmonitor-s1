@@ -16,12 +16,17 @@
             "showTemperature": true,
             "showHumidity": true,
             "showAirQuality": true,
-            "showCo2": true
+            "showCo2": true,
+            "co2_Threshold": 1000,
+            "tVoc_Adjust": 1000            
         }
     ]
 ```
 
 ## Settings
+
+1. tVoc_Adjust : change tvoc value (0.100 --> 100)
+                homekit display 0.100 to 0
 
 ## Minimal configuration
 

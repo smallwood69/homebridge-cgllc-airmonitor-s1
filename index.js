@@ -23,6 +23,8 @@ function ClearGrassAirMonitor(log, config) {
     this.nameTemperature = config.nameTemperature || 'Temperature';
     this.nameHumidity = config.nameHumidity || 'Humidity';
     this.nameCo2 = config.nameCo2 || 'Co2';
+    this.co2_Threshold = config.co2_Threshold || 1000;
+    this.tVoc_Adjust = config.tVoc_Adjust || 1000;
 
     this.device = null;
     this.mode = null;
@@ -31,7 +33,6 @@ function ClearGrassAirMonitor(log, config) {
     this.tvoc = null;
     this.aqi = null;
     this.co2 = null;
-    this.co2_Max = 1000;
 
     this.aqiLevels = [
         [200, Characteristic.AirQuality.POOR],
@@ -88,7 +89,7 @@ function ClearGrassAirMonitor(log, config) {
     if (this.showTemperature) {
         this.temperatureSensorService = new Service.TemperatureSensor(this.nameTemperature);
 
-	this.temperatureCharacteristic = this.service.addCharacteristic(Characteristic.CurrentTemperature);
+        this.temperatureCharacteristic = this.service.addCharacteristic(Characteristic.CurrentTemperature);
         this.temperatureSensorService
             .getCharacteristic(Characteristic.CurrentTemperature)
             .on('get', this.getTemperature.bind(this));
@@ -171,7 +172,7 @@ ClearGrassAirMonitor.prototype = {
 		    that.co2 = result['co2'];
 		    that.humidity = result['humidity'];
 		    that.aqi = result['pm25'];
-		    that.tvoc = result['tvoc'] / 22.45 / 10;
+		    that.tvoc = (result['tvoc'] / 22.45 / 10) * that.tVoc_Adjust;
 		    that.temperature = result['temperature'];
 		    
             that.pm2_5Characteristic.updateValue(that.aqi);
@@ -187,21 +188,21 @@ ClearGrassAirMonitor.prototype = {
             
             if (that.showCo2) {
                 that.co2LevelCharacteristic.updateValue(that.co2);
-		if(that.co2 < that.co2_Max){
-		    this.co2Characteristic.updateValue(Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL);
-           	}
-           	else{
-		    this.co2Characteristic.updateValue(Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL);
-           	} 
+                if(that.co2 < that.co2_Threshold){
+    		      this.co2Characteristic.updateValue(Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL);
+               	}
+           	    else{
+    		      this.co2Characteristic.updateValue(Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL);
+               	} 
             }
 
-                }).catch(function(err) {
-                    callback(err);
-                });
+        }).catch(function(err) {
+            callback(err);
+        });
 	    
-                setTimeout(function() {
-                    that.loadData();
-                }, 5000);
+        setTimeout(function() {
+            that.loadData();
+        }, 5000);
     },
     
     getStatusActive: function(callback) {
@@ -261,7 +262,7 @@ ClearGrassAirMonitor.prototype = {
         }
 
         this.log.debug('getCo2Detected: %s', this.co2);
-	   if(this.co2 < this.co2_Max){
+	   if(this.co2 < this.co2_Threshold){
 	        callback(null, Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL);
 	   }
 	   else{
