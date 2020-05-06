@@ -31,6 +31,7 @@ function ClearGrassAirMonitor(log, config) {
     this.tvoc = null;
     this.aqi = null;
     this.co2 = null;
+    this.co2_Max = 1000;
 
     this.aqiLevels = [
         [200, Characteristic.AirQuality.POOR],
@@ -98,7 +99,7 @@ function ClearGrassAirMonitor(log, config) {
     if (this.showHumidity) {
         this.humiditySensorService = new Service.HumiditySensor(this.nameHumidity);
 
-    this.humidityCharacteristic = this.service.addCharacteristic(Characteristic.CurrentRelativeHumidity);
+        this.humidityCharacteristic = this.service.addCharacteristic(Characteristic.CurrentRelativeHumidity);
         this.humiditySensorService
             .getCharacteristic(Characteristic.CurrentRelativeHumidity)
             .on('get', this.getHumidity.bind(this));
@@ -109,16 +110,14 @@ function ClearGrassAirMonitor(log, config) {
     if (this.showCo2) {
         this.carbonDioxideService = new Service.CarbonDioxideSensor(this.nameCo2);
 
-	this.co2Characteristic = this.service.addCharacteristic(Characteristic.CarbonDioxideDetected);
-        this.carbonDioxideService
+        this.co2Characteristic = this.carbonDioxideService
             .getCharacteristic(Characteristic.CarbonDioxideDetected)
-            .on('get', this.getCo2.bind(this));
+            .on('get', this.getCo2Detected.bind(this));
 
-	this.co2LevelCharacteristic = this.service.addCharacteristic(Characteristic.CarbonDioxideLevel);
+        this.co2LevelCharacteristic = this.carbonDioxideService.addCharacteristic(Characteristic.CarbonDioxideLevel);
         this.carbonDioxideService
             .getCharacteristic(Characteristic.CarbonDioxideLevel)
             .on('get', this.getCo2Level.bind(this));
-
 
         this.services.push(this.carbonDioxideService);
 
@@ -174,12 +173,27 @@ ClearGrassAirMonitor.prototype = {
 		    that.aqi = result['pm25'];
 		    that.tvoc = result['tvoc'] / 22.45 / 10;
 		    that.temperature = result['temperature'];
-		    that.pm2_5Characteristic.updateValue(that.aqi);
+		    
+            that.pm2_5Characteristic.updateValue(that.aqi);
 		    that.tvocCharacteristic.updateValue(that.tvoc);
-		    that.temperatureCharacteristic.updateValue(that.temperature);
-		    that.humidityCharacteristic.updateValue(that.humidity);
-		    that.co2Characteristic.updateValue(that.co2);
-		    that.co2LevelCharacteristic.updateValue(that.co2);
+            
+            if(that.showTemperature){
+		      that.temperatureCharacteristic.updateValue(that.temperature);
+            }
+            
+            if (that.showHumidity) {
+		      that.humidityCharacteristic.updateValue(that.humidity);
+            }
+            
+            if (that.showCo2) {
+                that.co2LevelCharacteristic.updateValue(that.co2);
+		if(that.co2 < that.co2_Max){
+		    this.co2Characteristic.updateValue(Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL);
+           	}
+           	else{
+		    this.co2Characteristic.updateValue(Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL);
+           	} 
+            }
 
                 }).catch(function(err) {
                     callback(err);
@@ -240,14 +254,14 @@ ClearGrassAirMonitor.prototype = {
         callback(null, this.tvoc);
     },
 
-    getCo2:  function(callback) {
+    getCo2Detected:  function(callback) {
         if (!this.device) {
             callback(new Error('No AirQuality Sensor is discovered.'));
             return;
         }
 
-        this.log.debug('getCo2: %s', this.co2);
-	   if(this.co2 < 1000){
+        this.log.debug('getCo2Detected: %s', this.co2);
+	   if(this.co2 < this.co2_Max){
 	        callback(null, Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL);
 	   }
 	   else{
@@ -257,6 +271,17 @@ ClearGrassAirMonitor.prototype = {
 
 
     getCo2Level:  function(callback) {
+        if (!this.device) {
+            callback(new Error('No AirQuality Sensor is discovered.'));
+            return;
+        }
+
+        this.log.debug('getCo2: %s', this.co2);
+        callback(null, this.co2);
+    },
+
+
+    getCo2PeakLevel:  function(callback) {
         if (!this.device) {
             callback(new Error('No AirQuality Sensor is discovered.'));
             return;
@@ -298,3 +323,5 @@ ClearGrassAirMonitor.prototype = {
         return this.services;
     }
 };
+
+
