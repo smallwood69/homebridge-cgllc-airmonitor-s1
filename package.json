@@ -1,6 +1,6 @@
 {
 	"name": "homebridge-cgllc-airmonitor-s1",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Xiaomi Clear Grass(S1) plugin for Homebridge.",
 	"author": "Steve Kim <smallwood69@gmail.com>",
 	"license": "MIT",
