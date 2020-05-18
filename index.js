@@ -197,7 +197,7 @@ ClearGrassAirMonitor.prototype = {
             }
 
         }).catch(function(err) {
-            callback(err);
+            log.debug('Failed to get_prop  %s', err);
         });
 	    
         setTimeout(function() {
