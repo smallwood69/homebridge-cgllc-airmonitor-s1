@@ -24,7 +24,6 @@ function ClearGrassAirMonitor(log, config) {
     this.nameHumidity = config.nameHumidity || 'Humidity';
     this.nameCo2 = config.nameCo2 || 'Co2';
     this.co2_Threshold = config.co2_Threshold || 1000;
-    this.tVoc_Adjust = config.tVoc_Adjust || 1000;
 
     this.device = null;
     this.mode = null;
@@ -39,6 +38,13 @@ function ClearGrassAirMonitor(log, config) {
         [150, Characteristic.AirQuality.INFERIOR],
         [100, Characteristic.AirQuality.FAIR],
         [50, Characteristic.AirQuality.GOOD],
+        [0, Characteristic.AirQuality.EXCELLENT],
+    ];
+    this.tvocLevels = [
+        [2000, Characteristic.AirQuality.POOR],
+        [600, Characteristic.AirQuality.INFERIOR],
+        [200, Characteristic.AirQuality.FAIR],
+        [60, Characteristic.AirQuality.GOOD],
         [0, Characteristic.AirQuality.EXCELLENT],
     ];
 
@@ -172,8 +178,10 @@ ClearGrassAirMonitor.prototype = {
 		    that.co2 = result['co2'];
 		    that.humidity = result['humidity'];
 		    that.aqi = result['pm25'];
-		    that.tvoc = (result['tvoc'] / 22.45 / 10) * that.tVoc_Adjust;
+		    that.tvoc = result['tvoc'];
 		    that.temperature = result['temperature'];
+//            log.debug('result :  %s', JSON.stringify(result));
+//            log.debug('tvoc :  %s', that.tvoc);
 		    
             that.pm2_5Characteristic.updateValue(that.aqi);
 		    that.tvocCharacteristic.updateValue(that.tvoc);
@@ -226,12 +234,31 @@ ClearGrassAirMonitor.prototype = {
 
         this.log.debug('getAirQuality: %s', this.aqi);
 
+	var pm25Level, tvocLevel;
+	var pm25Index, tvocIndex;
         for (var item of this.aqiLevels) {
             if (this.aqi >= item[0]) {
-                callback(null, item[1]);
-                return;
+		pm25Level = item[1];
+		pm25Index = this.aqiLevels.indexOf(item);
+                break;
             }
         }
+
+        for (var item of this.tvocLevels) {
+            if (this.tvoc >= item[0]) {
+		tvocLevel = item[1];
+		tvocIndex = this.tvocLevels.indexOf(item);
+                break;
+            }
+        }
+
+//	this.log.debug('pm25Level : [' + pm25Level + ']==>['+pm25Index + '], tvocLevel : ['+tvocLevel +'] ==>['+tvocIndex + ']');
+	if(pm25Index < tvocIndex){
+        	callback(null, pm25Level);
+	}
+	else{
+        	callback(null, tvocLevel);
+	}
     },
 
     getPM25: function(callback) {
@@ -324,5 +351,6 @@ ClearGrassAirMonitor.prototype = {
         return this.services;
     }
 };
+
 
 

@@ -22,16 +22,17 @@ Homebridge for Xiaomi ClearGrass
             "showHumidity": true,
             "showAirQuality": true,
             "showCo2": true,
-            "co2_Threshold": 1000,
-            "tVoc_Adjust": 1000            
+            "co2_Threshold": 1000          
         }
     ]
 ```
 
 ## Settings
 
-1. tVoc_Adjust : change tvoc value (0.100 --> 100)
-                homekit display 0.100 to 0
+0.0.8 update
+ : remove tVoc_Adjust,  Show only with ppb value.
+  Apply tvoc to air quality measurement
+
 
 ## Minimal configuration
 
