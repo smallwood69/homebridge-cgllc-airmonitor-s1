@@ -28,6 +28,9 @@ Homebridge for Xiaomi ClearGrass
 ```
 
 ## Settings
+0.0.10 update
+  change tvoc level
+
 0.0.9 update
   change air quality level
 

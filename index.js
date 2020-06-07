@@ -42,9 +42,9 @@ function ClearGrassAirMonitor(log, config) {
     ];
     this.tvocLevels = [
         [2000, Characteristic.AirQuality.POOR],
-        [600, Characteristic.AirQuality.INFERIOR],
-        [200, Characteristic.AirQuality.FAIR],
-        [60, Characteristic.AirQuality.GOOD],
+        [660, Characteristic.AirQuality.INFERIOR],
+        [220, Characteristic.AirQuality.FAIR],
+        [65, Characteristic.AirQuality.GOOD],
         [0, Characteristic.AirQuality.EXCELLENT],
     ];
 
