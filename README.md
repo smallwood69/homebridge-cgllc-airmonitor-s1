@@ -28,6 +28,8 @@ Homebridge for Xiaomi ClearGrass
 ```
 
 ## Settings
+0.0.9 update
+  change air quality level
 
 0.0.8 update
  : remove tVoc_Adjust,  Show only with ppb value.
