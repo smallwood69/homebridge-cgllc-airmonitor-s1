@@ -30,10 +30,11 @@ function ClearGrassAirMonitor(log, config) {
     this.temperature = null;
     this.humidity = null;
     this.tvoc = null;
-    this.aqi = null;
+    this.pm25 = null;
     this.co2 = null;
+    this.aqi = Characteristic.AirQuality.UNKNOWN;
 
-    this.aqiLevels = [
+    this.pm25Levels = [
         [150, Characteristic.AirQuality.POOR],
         [115, Characteristic.AirQuality.INFERIOR],
         [75, Characteristic.AirQuality.FAIR],
@@ -154,7 +155,7 @@ ClearGrassAirMonitor.prototype = {
                     log.debug('Mode        : ' + device.property('mode'));
                     log.debug('Temperature : ' + device.property('temperature'));
                     log.debug('Humidity    : ' + device.property('humidity'));
-                    log.debug('Air Quality : ' + device.property('aqi'));
+                    log.debug('Pm2.5       : ' + device.property('pm25'));
                     log.debug('co2         : ' + device.property('co2'));
                     log.debug('tvoc        : ' + device.property('tvoc'));
 
@@ -177,13 +178,13 @@ ClearGrassAirMonitor.prototype = {
 	    that.device.call("get_prop", ["co2","pm25","tvoc","temperature","humidity"]).then(result => {
 		    that.co2 = result['co2'];
 		    that.humidity = result['humidity'];
-		    that.aqi = result['pm25'];
+		    that.pm25 = result['pm25'];
 		    that.tvoc = result['tvoc'];
 		    that.temperature = result['temperature'];
 //            log.debug('result :  %s', JSON.stringify(result));
 //            log.debug('tvoc :  %s', that.tvoc);
 		    
-            that.pm2_5Characteristic.updateValue(that.aqi);
+            that.pm2_5Characteristic.updateValue(that.pm25);
 		    that.tvocCharacteristic.updateValue(that.tvoc);
             
             if(that.showTemperature){
@@ -203,6 +204,8 @@ ClearGrassAirMonitor.prototype = {
     		      this.co2Characteristic.updateValue(Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL);
                	} 
             }
+
+            that.updateAirQuality();
 
         }).catch(function(err) {
             log.debug('Failed to get_prop  %s', err);
@@ -234,42 +237,52 @@ ClearGrassAirMonitor.prototype = {
 
         this.log.debug('getAirQuality: %s', this.aqi);
 
-	var pm25Level, tvocLevel;
-	var pm25Index, tvocIndex;
-        for (var item of this.aqiLevels) {
-            if (this.aqi >= item[0]) {
-		pm25Level = item[1];
-		pm25Index = this.aqiLevels.indexOf(item);
+        callback(null, this.aqi);
+    },
+    updateAirQuality: function() {
+        if (!this.device) {
+            return;
+        }
+
+//        this.log.debug('pm2.5: %s', this.pm25);
+//        this.log.debug('tvoc : %s', this.tvoc);
+
+        var pm25Level, tvocLevel;
+        var pm25Index, tvocIndex;
+        for (var item of this.pm25Levels) {
+            if (this.pm25 >= item[0]) {
+                pm25Level = item[1];
+                pm25Index = this.pm25Levels.indexOf(item);
                 break;
             }
         }
 
         for (var item of this.tvocLevels) {
             if (this.tvoc >= item[0]) {
-		tvocLevel = item[1];
-		tvocIndex = this.tvocLevels.indexOf(item);
+                tvocLevel = item[1];
+                tvocIndex = this.tvocLevels.indexOf(item);
                 break;
             }
         }
 
-//	this.log.debug('pm25Level : [' + pm25Level + ']==>['+pm25Index + '], tvocLevel : ['+tvocLevel +'] ==>['+tvocIndex + ']');
-	if(pm25Index < tvocIndex){
-        	callback(null, pm25Level);
-	}
-	else{
-        	callback(null, tvocLevel);
-	}
+        //this.log.debug('pm25Level : [' + pm25Level + ']==>['+pm25Index + '], tvocLevel : ['+tvocLevel +'] ==>['+tvocIndex + ']');
+        if(pm25Index < tvocIndex){
+                this.aqi = pm25Level;
+        }
+        else{
+                this.aqi = tvocLevel;
+        }
+        this.service.setCharacteristic(Characteristic.AirQuality, this.aqi);
     },
-
     getPM25: function(callback) {
         if (!this.device) {
             callback(new Error('No AirQuality Sensor is discovered.'));
             return;
         }
 
-        this.log.debug('getPM25: %s', this.aqi);
+        this.log.debug('getPM25: %s', this.pm25);
 
-        callback(null, this.aqi);
+        callback(null, this.pm25);
     }
     ,getTvoc: function(callback) {
         if (!this.device) {
