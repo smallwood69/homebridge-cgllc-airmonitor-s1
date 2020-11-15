@@ -266,7 +266,7 @@ ClearGrassAirMonitor.prototype = {
         }
 
         //this.log.debug('pm25Level : [' + pm25Level + ']==>['+pm25Index + '], tvocLevel : ['+tvocLevel +'] ==>['+tvocIndex + ']');
-        if(pm25Index < tvocIndex){
+        if(pm25Index > tvocIndex){
                 this.aqi = pm25Level;
         }
         else{

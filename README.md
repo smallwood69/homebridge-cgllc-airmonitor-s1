@@ -28,6 +28,9 @@ Homebridge for Xiaomi ClearGrass
 ```
 
 ## Settings
+0.0.12 update
+ fix air quality status update
+ 
 0.0.11 update
  fix air quality status update
  
