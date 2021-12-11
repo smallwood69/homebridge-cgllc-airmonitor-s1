@@ -49,7 +49,7 @@ function ClearGrassAirMonitor(log, config) {
         [3, Characteristic.AirQuality.HIGH],
         [1, Characteristic.AirQuality.SLIGHTLY_HIGH],
         [0.3, Characteristic.AirQuality.GOOD],
-        [0, Characteristic.AirQuality.EXCELLENT]
+        [0, Characteristic.AirQuality.EXCELLENT],
     ];
 
     this.services = [];
