@@ -36,10 +36,10 @@ function ClearGrassAirMonitor(log, config) {
 
     // Using US PM2.5 scale from Clear Grass Air Monitor
     this.pm25Levels = [
-        [250, Characteristic.AirQuality.SEVERELY_POLLUTED],
-        [150, Characteristic.AirQuality.HEAVILY_POLLUTED],
-        [55, Characteristic.AirQuality.MODERATELY_POLLUTED],
-        [35, Characteristic.AirQuality.SLIGHTLY_POLLUTED],
+        [250, Characteristic.AirQuality.UNHEALTHY],
+        [150, Characteristic.AirQuality.HIGH],
+        [55, Characteristic.AirQuality.MODERATE],
+        [35, Characteristic.AirQuality.FAIR],
         [12, Characteristic.AirQuality.GOOD],
         [0, Characteristic.AirQuality.EXCELLENT],
     ];
