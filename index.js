@@ -34,19 +34,21 @@ function ClearGrassAirMonitor(log, config) {
     this.co2 = null;
     this.aqi = Characteristic.AirQuality.UNKNOWN;
 
+    // Using US PM2.5 scale
     this.pm25Levels = [
-        [150, Characteristic.AirQuality.POOR],
-        [115, Characteristic.AirQuality.INFERIOR],
-        [75, Characteristic.AirQuality.FAIR],
-        [35, Characteristic.AirQuality.GOOD],
+        [250, Characteristic.AirQuality.SEVERELY_POLLUTED],
+        [150, Characteristic.AirQuality.HEAVILY_POLLUTED],
+        [55, Characteristic.AirQuality.MODERATELY_POLLUTED],
+        [35, Characteristic.AirQuality.SLIGHTLY_POLLUTED],
+        [12, Characteristic.AirQuality.GOOD],
         [0, Characteristic.AirQuality.EXCELLENT],
     ];
+    // Using real tVOC pollution scale
     this.tvocLevels = [
-        [2000, Characteristic.AirQuality.POOR],
-        [660, Characteristic.AirQuality.INFERIOR],
-        [220, Characteristic.AirQuality.FAIR],
-        [65, Characteristic.AirQuality.GOOD],
-        [0, Characteristic.AirQuality.EXCELLENT],
+        [9, Characteristic.AirQuality.VERY_HIGH],
+        [3, Characteristic.AirQuality.HIGH],
+        [1, Characteristic.AirQuality.SLIGHTLY_HIGH],
+        [0.3, Characteristic.AirQuality.GOOD],
     ];
 
     this.services = [];
